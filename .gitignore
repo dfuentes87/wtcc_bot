@@ -1,0 +1,8 @@
+#OS
+debug.txt
+.DS_*
+
+#Visual Code Studio
+__pycache/
+.vscode/
+*.code-workspace
