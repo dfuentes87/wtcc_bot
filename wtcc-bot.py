@@ -2,21 +2,17 @@
 
 from os import environ
 import discord
-import discord_slash
-from discord_slash.utils import manage_commands
-from discord_slash.utils.manage_commands import create_option
+from discord.app import Option
 import rmp_info
 import course_info
 from bs4 import BeautifulSoup
 import requests
 
-# make sure to set your guild id and token
+# Set your own server's guild id and bot token
 guild_id = environ.get("GUILD")
 token = environ.get("TOKEN")
 
 bot = discord.Bot()
-client = discord.Client(intents=discord.Intents.default())
-slash = discord_slash.SlashCommand(client, sync_commands=True)
 
 WAKETECH_BLUE = 0x005480
 
@@ -28,7 +24,7 @@ if DEBUG:
 
     logging.basicConfig(level=logging.WARNING)
 
-    # Discord bot token & guild ID
+    # Discord bot token & guild ID. must be in order on separate lines
     f = open("debug.txt")
     lines = f.readlines()
     token = lines[0]
@@ -41,65 +37,57 @@ if DEBUG:
         print("Ready!")
 
     # Verify response and latency
-    @bot.slash_command(name="ping", guild_ids=guild_id)
+    @bot.command(guild_ids=guild_id,
+                description="Verify response and latency")
     async def ping(ctx):
-        await ctx.send(f"Pong! ({bot.latency*1000}ms)")
+        await ctx.respond(f"Pong! ({bot.latency*1000}ms)")
 
-    # clean quit
-    @bot.slash_command(name="logout", guild_ids=guild_id,
+    # Clean quit
+    @bot.command(guild_ids=guild_id,
                 description="Graceful shutdown")
     async def logout(ctx):
-        await ctx.send("Shutting down...")
+        await ctx.respond("Shutting down...")
         await bot.close()
 ### END DEBUG OPTIONS ###
 
 # ratemyprofessor
-@bot.slash_command(name="professor", guild_ids=guild_id,
-             description="Check RateMyProfessors: Enter first and last name only!",
-             options=[
-               create_option(
-                 name="Professor Name",
-                 description="Professor's first and last name",
-                 option_type=3,
-                 required=True
-               )
-             ])
-async def professor(ctx, name):
+@bot.command(guild_ids=guild_id,
+            description="Check RateMyProfessors")
+async def professor(ctx,
+    name: Option(str, "Professor's first and last name, e.g. Karen Klein", required=True)
+):
     # Discord will only wait up to 3 seconds for a response, so we need to defer
     await ctx.defer()
     await ctx.followup.send(embed=rmp_info.embed_builder(name))
 
 
 # course info
-@bot.slash_command(name="course", guild_ids=guild_id,
-             description="Get info on a course, e.g. NET 125",
-             options=[
-               create_option(
-                 name="Course Info",
-                 description="Course number",
-                 option_type=3,
-                 required=True
-               )
-             ])
-# dep = department, num = course number. space is required 
-async def get(ctx, dep, num):
+@bot.command(guild_ids=guild_id,
+             description="Get info on a course")
+async def course(ctx,
+    course: Option(str, "Enter a course (no hyphen), e.g. NET 125", required=True)
+):
+    ## dep = department, num = course number
+    
+    dep, num = str(course).split()
+
     url = (
-        "https://waketech.edu/course/"
-        + f"{dep}-{num}"
+        "https://waketech.edu/course/" + f"{dep}-{num}"
     )
     r = requests.get(url)
 
     if r.status_code == 404:
         embed = discord.Embed(
             title="404: Course not found",
-            description="That doesn't seem to be a real course, or it may no longer be offered. You may also want to check the spelling of your command; remember that courses are formatted like this: CTI 110.",
+            description="That doesn't seem to be a real course, or it may no longer be offered. You may also want to check the spelling of your command; remember that courses are formatted like this (no hyphen): CTI 110",
             color=WAKETECH_BLUE,
         )
         embed.set_footer(
             text="Questions, suggestions, problems? Send a message to netdragon#3288"
         )
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
     else:
-        await ctx.send(embed=course_info.embed_builder(dep, num, url))
+        await ctx.defer()
+        await ctx.followup.send(embed=course_info.course_embed_builder(dep, num, url))
 
 bot.run(token)

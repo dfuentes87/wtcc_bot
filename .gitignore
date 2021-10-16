@@ -1,8 +1,11 @@
-#OS
+#Debugging
+test.py
 debug.txt
+
+#OS
 .DS_*
 
 #Visual Code Studio
-__pycache/
+__pycache__/
 .vscode/
 *.code-workspace
