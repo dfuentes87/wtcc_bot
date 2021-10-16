@@ -4,22 +4,24 @@ The WTCC bot is a Discord bot which pulls information from Wake Tech's course de
 
 ## Commands
 
-When ready at release, the bot will take two slash commands, one for course descriptions and another for ratemyprofessors.com.
+The bot takes two slash commands, one for course information and another for ratemyprofessors.com.
 
 #### Examples
 
 `/professor Harry Truman` will return results for the professor "Harry Truman" on RateMyProfessors.com 
 
-`/course NET 125` will return results for the class known as "NET-125 - Introduction to Networks"
+`/course NET-125` will return results for the class known as "NET-125 - Introduction to Networks"
+
+![Screenshot](screenshot.jpg?raw=true "Screenshot")
 
 ## Adding the Bot
 
 Bot is currently in Beta, no link to add it directly will be provided at this time. If you decide to use it in this stage, I won't be providing any support and you'll be using it at your own risk. Code is constantly being changed!
 
-## TODO
+## ToDo
 
-- Add README screenshot
-- Look into other features to add
+- Implement cooldown on commands (once Pycord implements it to slash commands)
+- Look into adding other features
 
 ## Acknowledgements and License
 
