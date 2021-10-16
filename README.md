@@ -2,24 +2,24 @@
 
 The WTCC bot is a Discord bot which pulls information from Wake Tech's course descriptions and RateMyProfessors.com.
 
-## Adding the Bot
+## Commands
 
-Bot is currently in alpha, no link to add it directly will be provided at this time.
-
-## Commands and Getting Started
-
-When ready at release, the bot will take two slash commands, one for course descriptions and another for ratemyprofessors.com:
+When ready at release, the bot will take two slash commands, one for course descriptions and another for ratemyprofessors.com.
 
 #### Examples
 
 `/professor Harry Truman` will return results for the professor "Harry Truman" on RateMyProfessors.com 
 
-`/course NET 125` will return results for the class known as NET-125 - Introduction to Networks
+`/course NET 125` will return results for the class known as "NET-125 - Introduction to Networks"
+
+## Adding the Bot
+
+Bot is currently in Beta, no link to add it directly will be provided at this time. If you decide to use it in this stage, I won't be providing any support and you'll be using it at your own risk. Code is constantly being changed!
 
 ## TODO
 
-- Add course descriptions search
-- Add readme screenshot
+- Add README screenshot
+- Look into other features to add
 
 ## Acknowledgements and License
 

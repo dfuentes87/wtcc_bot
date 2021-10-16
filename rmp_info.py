@@ -17,7 +17,7 @@ def embed_builder(prof_name):
         if professor.would_take_again is not None:
             prof_again = str(round(professor.would_take_again, 1)) + "%"
         else:
-            prof_again = "No rating or 0%"
+            prof_again = "0% or no rating"
 
         embed = discord.Embed(
             title=prof_name,
