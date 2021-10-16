@@ -12,12 +12,13 @@ import requests
 guild_id = environ.get("GUILD")
 token = environ.get("TOKEN")
 
-bot = discord.Bot()
-
+# embed message color
 WAKETECH_BLUE = 0x005480
 
+bot = discord.Bot()
+
 ### DEBUG OPTIONS ###
-DEBUG = True
+DEBUG = False
 
 if DEBUG:
     import logging
@@ -36,13 +37,11 @@ if DEBUG:
     async def on_ready():
         print("Ready!")
 
-    # Verify response and latency
     @bot.command(guild_ids=guild_id,
                 description="Verify response and latency")
     async def ping(ctx):
         await ctx.respond(f"Pong! ({bot.latency*1000}ms)")
 
-    # Clean quit
     @bot.command(guild_ids=guild_id,
                 description="Graceful shutdown")
     async def logout(ctx):
@@ -52,7 +51,7 @@ if DEBUG:
 
 # ratemyprofessor
 @bot.command(guild_ids=guild_id,
-            description="Check RateMyProfessors")
+            description="Check RateMyProfessors.com")
 async def professor(ctx,
     name: Option(str, "Professor's first and last name, e.g. Karen Klein", required=True)
 ):
@@ -63,16 +62,15 @@ async def professor(ctx,
 
 # course info
 @bot.command(guild_ids=guild_id,
-             description="Get info on a course")
+             description="Get information on a course.")
 async def course(ctx,
-    course: Option(str, "Enter a course (no hyphen), e.g. NET 125", required=True)
+    course: Option(str, "Enter a course (with hyphen), e.g. NET-125", required=True)
 ):
     ## dep = department, num = course number
-    
-    dep, num = str(course).split()
+    dep, num = str(course).split('-')
 
     url = (
-        "https://waketech.edu/course/" + f"{dep}-{num}"
+        "https://waketech.edu/course/" + f"{course}"
     )
     r = requests.get(url)
 
@@ -88,6 +86,7 @@ async def course(ctx,
         await ctx.respond(embed=embed)
     else:
         await ctx.defer()
-        await ctx.followup.send(embed=course_info.course_embed_builder(dep, num, url))
+        await ctx.followup.send(embed=course_info.embed_builder(dep, url))
+
 
 bot.run(token)

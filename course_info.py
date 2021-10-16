@@ -17,13 +17,14 @@ def title_body(soup):
 
     return full_class_name, full_class_descr
 
-def course_embed_builder(dep, num, url):
+def embed_builder(dep, url):
     page = requests.get(url)
     content = page.content
     soup = BeautifulSoup(content, 'html.parser')
 
     full_class_name, full_class_descr = title_body(soup)
 
+    # get course credits
     details_dict = {}
     for data in soup.find_all("strong"):
         details_value = str(data.next_sibling)
@@ -34,7 +35,15 @@ def course_embed_builder(dep, num, url):
 
     reqs = (details_dict['Requisites:'])
     credit_num = (details_dict['Total Class Credits:'])
+    selfserv_url = "[Click here](https://selfserve.waketech.edu/Student/Courses/Search?subjects=" + str(dep) + ")"
+    
+    # get program overview url
+    prog_href = soup.find_all(href=re.compile("programs-courses/credit/"))
+    for tag in prog_href:
+        prog_rel = tag.get('href')
+    program_url = "[Click here](https://waketech.edu" + str(prog_rel) + ")"
 
+    # create the embed
     embed = discord.Embed(
         title=full_class_name,
         url=url,
@@ -43,7 +52,8 @@ def course_embed_builder(dep, num, url):
     )   
     embed.add_field(name="Prerequisites/Corequisites", value=reqs, inline=True)
     embed.add_field(name="Credits", value=credit_num, inline=True)
-    embed.add_field(name="View in Self-Service", value="[Click here](https://selfserve.waketech.edu/Student/Courses/Search?subjects=" + dep + ")", inline=True)
+    embed.add_field(name="Self-Service", value=selfserv_url, inline=True)
+    embed.add_field(name="Program Overview", value=program_url, inline=True)
 
     embed.set_footer(text="Questions, suggestions, problems? Send a message to netdragon#3288")
 
