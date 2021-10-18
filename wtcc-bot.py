@@ -28,7 +28,7 @@ async def on_ready():
 
 
 ### DEBUG OPTIONS ###
-DEBUG = True
+DEBUG = False
 
 if DEBUG:
     import logging
