@@ -24,7 +24,7 @@ def embed_builder(dep, url):
 
     full_class_name, full_class_descr = title_body(soup)
 
-    # get course credits
+    # get course details
     details_dict = {}
     for data in soup.find_all("strong"):
         details_value = str(data.next_sibling)
@@ -33,15 +33,27 @@ def embed_builder(dep, url):
         details_key = re.sub('<*.?strong>','',details_key, flags=re.DOTALL)
         details_dict[details_key] = details_value
 
+    # Requisites can get pretty long, let's make sure it wont break things
     reqs = (details_dict['Requisites:'])
+    groups = reqs.split(';')
+    if len(groups) > 3:
+        reqs = "List too long, [go to the page](" + str(url) +")."
+    else:
+        reqs_list = ''
+        for x in groups:
+            reqs_list += x + "\n"
+        reqs = reqs_list
+
     credit_num = (details_dict['Total Class Credits:'])
     selfserv_url = "[Click here](https://selfserve.waketech.edu/Student/Courses/Search?subjects=" + str(dep) + ")"
-    
-    # get program overview url
+
+    # get program overview url, if it exists
     prog_href = soup.find_all(href=re.compile("programs-courses/credit/"))
-    for tag in prog_href:
-        prog_rel = tag.get('href')
-    program_url = "[Click here](https://waketech.edu" + str(prog_rel) + ")"
+    if prog_href is not None:
+        program_url = None
+        for tag in prog_href:
+            prog_rel = tag.get('href')
+            program_url = "[Click here](https://waketech.edu" + str(prog_rel) + ")"
 
     # create the embed
     embed = discord.Embed(
@@ -49,11 +61,12 @@ def embed_builder(dep, url):
         url=url,
         description=full_class_descr,
         color=WAKETECH_BLUE,
-    )   
+    )
     embed.add_field(name="Prerequisites/Corequisites", value=reqs, inline=True)
     embed.add_field(name="Credits", value=credit_num, inline=True)
     embed.add_field(name="Self-Service", value=selfserv_url, inline=True)
-    embed.add_field(name="Program Overview", value=program_url, inline=True)
+    if program_url is not None:
+        embed.add_field(name="Program Overview", value=program_url, inline=True)
 
     embed.set_footer(text="Questions, suggestions, problems? Send a message to netdragon#3288")
 
