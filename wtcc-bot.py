@@ -8,17 +8,27 @@ import course_info
 from bs4 import BeautifulSoup
 import requests
 
+
+## currently broken in conjunction with pycord, set manually instead ##
 # Set your own server's guild id and bot token
-guild_id = environ.get("GUILD")
-token = environ.get("TOKEN")
+#guild_id = environ.get("GUILD")
+#token = environ.get("TOKEN")
+guild_id = [] # must be a list
+token = ""
 
 # embed message color
 WAKETECH_BLUE = 0x005480
 
+# bot initilization
 bot = discord.Bot()
 
+@bot.event
+async def on_ready():
+    print("Ready!")
+
+
 ### DEBUG OPTIONS ###
-DEBUG = False
+DEBUG = True
 
 if DEBUG:
     import logging
@@ -32,10 +42,6 @@ if DEBUG:
     guild = int(lines[1])
     guild_id = []
     guild_id.append(guild)
-
-    @bot.event
-    async def on_ready():
-        print("Ready!")
 
     @bot.command(guild_ids=guild_id,
                 description="Verify response and latency")
@@ -77,7 +83,7 @@ async def course(ctx,
     if r.status_code == 404:
         embed = discord.Embed(
             title="404: Course not found",
-            description="That doesn't seem to be a real course, or it may no longer be offered. You may also want to check the spelling of your command; remember that courses are formatted like this (no hyphen): CTI 110",
+            description="That doesn't seem to be a real course, or it may no longer be offered. Also, keep in mind that you need to format the course with a hyphen: CTI-110",
             color=WAKETECH_BLUE,
         )
         embed.set_footer(
