@@ -20,7 +20,7 @@ def title_body(soup):
 def embed_builder(dep, url):
     page = requests.get(url)
     content = page.content
-    soup = BeautifulSoup(content, 'html.parser')
+    soup = BeautifulSoup(content, 'lxml')
 
     full_class_name, full_class_descr = title_body(soup)
 
@@ -36,7 +36,7 @@ def embed_builder(dep, url):
     # Requisites can get pretty long, let's make sure it wont break things
     reqs = (details_dict['Requisites:'])
     groups = reqs.split(';')
-    if len(groups) > 3:
+    if len(groups) > 4:
         reqs = "List too long, [go to the page](" + str(url) +")."
     else:
         reqs_list = ''
@@ -45,7 +45,7 @@ def embed_builder(dep, url):
         reqs = reqs_list
 
     credit_num = (details_dict['Total Class Credits:'])
-    selfserv_url = "[Click here](https://selfserve.waketech.edu/Student/Courses/Search?subjects=" + str(dep) + ")"
+    selfserv_url = "[Click here](https://selfserve.waketech.edu/Student/Courses/Search?subjects=" + str(dep.upper()) + ")"
 
     # get program overview url, if it exists
     prog_href = soup.find_all(href=re.compile("programs-courses/credit/"))

@@ -22,11 +22,6 @@ WAKETECH_BLUE = 0x005480
 # bot initilization
 bot = discord.Bot()
 
-@bot.event
-async def on_ready():
-    print("Ready!")
-
-
 ### DEBUG OPTIONS ###
 DEBUG = False
 
@@ -55,9 +50,40 @@ if DEBUG:
         await bot.close()
 ### END DEBUG OPTIONS ###
 
+@bot.event
+async def on_ready():
+    print("Ready!")
+    await bot.change_presence(status=discord.Status.online,
+                    activity=discord.Game('Use /help for more info!'))
+
+# help/usage
+@bot.command(guild_ids=guild_id,
+            description="Get more info about the bot and commands")
+async def help(ctx):
+    embed = discord.Embed(
+        title="WTCC Bot Help",
+        description="""WTCC bot is a Discord bot which pulls information from Wake Tech's course descriptions and RateMyProfessors.com.
+        
+        **Course Descriptions**
+        Use `/course` to find out more information about a course.
+        
+        **RateMyProfessor**
+        Use `/professor` to get ratings on a professor from ratemyprofessor.com
+        
+        **Source Code**
+        [Click here](https://github.com/dfuentes87/wtcc_bot/)
+        """,
+        color=WAKETECH_BLUE,
+    )
+    embed.set_footer(
+        text="Questions, suggestions, problems? Send a message to netdragon#3288"
+    )
+    await ctx.respond(embed=embed)
+
+
 # ratemyprofessor
 @bot.command(guild_ids=guild_id,
-            description="Check RateMyProfessors.com")
+            description="Get ratings on a professor from ratemyprofessor.com")
 async def professor(ctx,
     name: Option(str, "Professor's first and last name, e.g. Karen Klein", required=True)
 ):
