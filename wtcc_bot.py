@@ -2,7 +2,7 @@
 
 from os import environ
 import discord
-from discord.app import Option
+from discord.commands import Option
 import rmp_info
 import course_info
 from bs4 import BeautifulSoup
@@ -67,8 +67,8 @@ async def help(ctx):
         **Course Descriptions**
         Use `/course` to find out more information about a course.
         
-        **RateMyProfessor**
-        Use `/professor` to get ratings on a professor from ratemyprofessor.com
+        **Rate My Professors**
+        Use `/professor` to get ratings on a professor from ratemyprofessors.com
         
         **Source Code**
         [Click here](https://github.com/dfuentes87/wtcc_bot/)
@@ -81,9 +81,9 @@ async def help(ctx):
     await ctx.respond(embed=embed)
 
 
-# ratemyprofessor
+# ratemyprofessors
 @bot.command(guild_ids=guild_id,
-            description="Get ratings on a professor from ratemyprofessor.com")
+            description="Get ratings on a professor from ratemyprofessors.com")
 async def professor(ctx,
     name: Option(str, "Professor's first and last name, e.g. Karen Klein", required=True)
 ):
@@ -96,10 +96,15 @@ async def professor(ctx,
 @bot.command(guild_ids=guild_id,
              description="Get information on a course.")
 async def course(ctx,
-    course: Option(str, "Enter a course (with hyphen), e.g. NET-125", required=True)
+    course: Option(str, "Enter a course, for example: NET-125", required=True)
 ):
-    ## dep = department, num = course number
-    dep, num = str(course).split('-')
+    # add hyphen if missing, needed for url
+    course = str(course)
+    if '-' in course:
+        dep, num = course.split('-')
+    else:
+        dep, num = course.split()
+        course = dep + "-" + num
 
     url = (
         "https://waketech.edu/course/" + f"{course}"
@@ -109,7 +114,7 @@ async def course(ctx,
     if r.status_code == 404:
         embed = discord.Embed(
             title="404: Course not found",
-            description="That doesn't seem to be a real course, or it may no longer be offered. Also, keep in mind that you need to format the course with a hyphen: CTI-110",
+            description="That doesn't seem to be a real course or it may no longer be offered.",
             color=WAKETECH_BLUE,
         )
         embed.set_footer(
@@ -118,7 +123,7 @@ async def course(ctx,
         await ctx.respond(embed=embed)
     else:
         await ctx.defer()
-        await ctx.followup.send(embed=course_info.embed_builder(dep, url))
+        await ctx.followup.send(embed=course_info.embed_builder(course, url))
 
 
 bot.run(token)

@@ -17,7 +17,7 @@ def title_body(soup):
 
     return full_class_name, full_class_descr
 
-def embed_builder(dep, url):
+def embed_builder(course, url):
     page = requests.get(url)
     content = page.content
     soup = BeautifulSoup(content, 'lxml')
@@ -45,7 +45,7 @@ def embed_builder(dep, url):
         reqs = reqs_list
 
     credit_num = (details_dict['Total Class Credits:'])
-    selfserv_url = "[Click here](https://selfserve.waketech.edu/Student/Courses/Search?subjects=" + str(dep.upper()) + ")"
+    selfserv_url = "[Click here](https://selfserve.waketech.edu/Student/Courses/Search?keyword=" + course + ")"
 
     # get program overview url, if it exists
     prog_href = soup.find_all(href=re.compile("programs-courses/credit/"))

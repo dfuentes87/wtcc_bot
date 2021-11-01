@@ -14,7 +14,7 @@ def embed_builder(prof_name):
         prof_rating = str(professor.rating) + " / 5.0"
         prof_diff = str(professor.difficulty) + " / 5.0"
         prof_total = professor.num_ratings
-        if professor.would_take_again is not None:
+        if professor.would_take_again is not None and professor.would_take_again > 0:
             prof_again = str(round(professor.would_take_again, 1)) + "%"
         else:
             prof_again = "0% or no rating"
@@ -31,7 +31,7 @@ def embed_builder(prof_name):
     else:
         embed = discord.Embed(
             title="404: Professor not found",
-            description="Double check your spelling and make sure you are typing only the first and last name. Otherwise, they do not have an entry in ratemyprofessor.com.",
+            description="Double check your spelling and make sure you are typing only the first and last name. Otherwise, they do not have an entry in ratemyprofessors.com.",
             color=WAKETECH_BLUE,
         )
 
