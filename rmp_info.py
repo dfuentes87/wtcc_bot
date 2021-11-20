@@ -34,5 +34,6 @@ def embed_builder(prof_name):
             description="Double check your spelling and make sure you are typing only the first and last name. Otherwise, they do not have an entry in ratemyprofessors.com.",
             color=WAKETECH_BLUE,
         )
+        embed.set_footer(text="Questions, suggestions, or problems regarding the bot? Send a message to netdragon#3288")
 
     return embed
