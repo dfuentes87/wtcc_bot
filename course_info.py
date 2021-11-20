@@ -8,7 +8,8 @@ import re
 WAKETECH_BLUE = 0x005480
 
 """
-We're going to be using BeautifulSoup (https://beautiful-soup-4.readthedocs.io) to render the page in HTML to easily pullout the items we need to created the embeded response.
+We're going to be using BeautifulSoup (https://beautiful-soup-4.readthedocs.io) to 
+render the page in HTML to easily pullout the items we need to created the embeded response.
 """
 
 def title_body(soup):
@@ -68,6 +69,5 @@ def embed_builder(course, url):
     if program_url is not None:
         embed.add_field(name="Program Overview", value=program_url, inline=True)
 
-    embed.set_footer(text="Questions, suggestions, problems? Send a message to netdragon#3288")
 
     return embed
