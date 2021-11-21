@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
+from dotenv import load_dotenv
 import discord
 from discord.commands import Option
 import rmp_info
@@ -10,12 +11,11 @@ import requests
 import transfer_info
 
 
-# Set your own server's guild id and bot token
-# for security reasons, this is being done using enviornmental variables
-token = environ.get("TOKEN")
-guild = int(environ.get("GUILD"))
-guild_id = []
-guild_id.append(guild)
+# Add your server's guild id and bot token in a .env file
+# You can edit and rename .env.sample
+load_dotenv()
+TOKEN = environ.get("TOKEN")
+GUILD_ID = [int(environ.get("GUILD"))]
 
 # embed message color
 WAKETECH_BLUE = 0x005480
@@ -31,20 +31,11 @@ if DEBUG:
 
     logging.basicConfig(level=logging.WARNING)
 
-    # token & guild ID used for debugging; must be in order and on separate lines
-    f = open("debug.txt")
-    lines = f.readlines()
-    token = lines[0]
-    guild = int(lines[1])
-    guild_id = []
-    guild_id.append(guild)
-    f.close()
-
-    @bot.command(guild_ids=guild_id, description="Verify response and latency")
+    @bot.command(guild_ids=GUILD_ID, description="Verify response and latency")
     async def ping(ctx):
         await ctx.respond(f"Pong! ({bot.latency*1000}ms)")
 
-    @bot.command(guild_ids=guild_id, description="Graceful shutdown")
+    @bot.command(guild_ids=GUILD_ID, description="Graceful shutdown")
     async def logout(ctx):
         await ctx.respond("Shutting down...")
         await bot.close()
@@ -57,7 +48,7 @@ async def on_ready():
                     activity=discord.Game('Use /help for more info!'))
 
 # help/usage
-@bot.command(guild_ids=guild_id, description="Get more info about the bot and commands")
+@bot.command(guild_ids=GUILD_ID, description="Get more info about the bot and commands")
 async def help(ctx):
     embed = discord.Embed(
         title="WTCC Bot Help",
@@ -84,7 +75,7 @@ async def help(ctx):
 
 
 # ratemyprofessors
-@bot.command(guild_ids=guild_id, description="Get ratings on a professor from ratemyprofessors.com")
+@bot.command(guild_ids=GUILD_ID, description="Get ratings on a professor from ratemyprofessors.com")
 async def professor(ctx,
     name: Option(str, "Professor's first and last name, e.g. Karen Klein", required=True)
 ):
@@ -94,7 +85,7 @@ async def professor(ctx,
 
 
 # course info
-@bot.command(guild_ids=guild_id, description="Get information on a course.")
+@bot.command(guild_ids=GUILD_ID, description="Get information on a course.")
 async def course(ctx,
     id: Option(str, "Enter a course, for example: NET-125", required=True)
 ):
@@ -124,7 +115,7 @@ async def course(ctx,
 
 
 # transfer info
-@bot.command(guild_ids=guild_id, description="Find your transfer options by Program/Degree or NC University (pick only ONE option).")
+@bot.command(guild_ids=GUILD_ID, description="Find your transfer options by Program/Degree or NC University (pick only ONE option).")
 async def transfer(ctx,
     program: Option(str, "Enter program or degree name, e.g. 'Simulation and Game Development' or 'Associate in Engineering'", required=False),
     university: Option(str, "Enter a NC university name, e.g. 'East Carolina University'", required=False)
@@ -132,8 +123,11 @@ async def transfer(ctx,
     # fancy xor usage to force only one option
     if bool(program) ^ bool(university):
         await ctx.defer()
-        #await ctx.followup.send(embed=transfer_info.embed_builder_prog(Program))
-        await ctx.followup.send("Work in progress, keep an eye on #server-announcements for when this functionality is ready!")
+        if program is not None:
+            await ctx.followup.send(embed=transfer_info.embed_builder_prog(program))
+        else:
+            await ctx.followup.send("Work in progress, keep an eye on #server-announcements for when this functionality is ready!")
+            #await ctx.followup.send(embed=transfer_info.embed_builder_uni(university))
     else:
         embed = discord.Embed(
             title="400: Bad Request",
@@ -146,4 +140,4 @@ async def transfer(ctx,
         await ctx.respond(embed=embed)
 
 
-bot.run(token)
+bot.run(TOKEN)
