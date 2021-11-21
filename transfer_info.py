@@ -2,6 +2,7 @@
 
 import discord
 from bs4 import BeautifulSoup
+from bs4 import SoupStrainer
 import requests
 import re
 
@@ -15,29 +16,53 @@ render the page in HTML to easily pullout the items we need to created the embed
 def embed_builder_prog(program):
     url = 'https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree'
     page = requests.get(url)
-    content = page.content
-    soup = BeautifulSoup(content, 'lxml')
+    # get rid of everything but the table data
+    institution_table = SoupStrainer(class_="table table-striped table-responsive")
+    soup = BeautifulSoup(page.content, "lxml", parse_only=institution_table)
 
-    # program/degree title
-    # PROGRAM/DEGREE
+    # '^' will make regex do a 'starts with' search
+    program = "^" + program
+    program_title = soup.find(string=re.compile(program, re.IGNORECASE))
 
-    # title url (tbd)
+    # title url (tbd?)
 
-    # description
-    # **Institution**
-    # "College or Program Transfers To"
+    if program_title is None:
+        embed = discord.Embed(
+            title="404: Degree/Program not found",
+            description="Check your spelling, otherwise that program/degree may not be transferable.\n[Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree) to check the full degree transfer list.",
+            color=WAKETECH_BLUE,
+        )
+        embed.set_footer(
+            text="Questions, suggestions, or problems regarding the bot? Send a message to netdragon#3288")
+
+        return embed
+
+    # program transfer options
+    program_details = ""
+    for item in soup.find_all("strong"):
+        if program_title in str(item):
+            for next in item.find_all_next("tr"):
+                if "strong" not in str(next):
+                    next = str(next)
+                    next = re.sub('<.*?>','',next, flags=re.DOTALL)
+                    details = next.replace('\n','** : ',1)
+                    details = "**" + details
+                    # remove annoying HTML 'amp;'
+                    details = details.replace('amp;','')
+                    program_details += details + "\n"
+                else:
+                    break
 
     short_url = "[Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree)"
 
     # create the embed
     embed = discord.Embed(
-        title=program_title,
+        title="TRANSFER OPTIONS FOR: \n" + program_title,
         #url=url,
-        description=program_description,
+        description=program_details,
         color=WAKETECH_BLUE,
     )
-    embed.add_field(name="Comprehensive List of Transfer Options", value=short_url, inline=True)
-
+    embed.add_field(name="Full List of Transfer Options by Degree:", value=short_url, inline=True)
 
     return embed
 
