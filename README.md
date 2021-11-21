@@ -1,16 +1,15 @@
 # WTCC-bot
 
-The WTCC bot is a Discord bot which pulls information from Wake Tech's course descriptions and RateMyProfessors.com.
+The WTCC bot is a Discord bot which pulls information from Wake Tech's course descriptions, NC university transfer information, and RateMyProfessors.com.
 
 ## Commands
 
-The bot currently takes two slash commands, one for course information and another for ratemyprofessors.com.
 
-#### Examples
+`/professor` will return the ratings from ratemyprofessors.com for the professor specified. The bot only searches for professors at Wake Tech Community College in North Carolina.
 
-`/professor Harry Truman` will return results for the professor "Harry Truman" on RateMyProfessors.com 
+`/course` will return information about the course specified.
 
-`/course NET-125` will return results for the class known as "NET-125 - Introduction to Networks"
+`/transfer` is used to get transfer options either based on the degree/program or university specified, depending on which suboption you choose.
 
 ![Screenshot](screenshot.jpg?raw=true "Screenshot")
 
@@ -19,8 +18,8 @@ The bot currently takes two slash commands, one for course information and anoth
 The WTCC Bot is currently in Beta but stable enough for use. To deploy the bot for your Discord server:
 
 1. Clone the repo on the hosting server that will be running the bot
-2. Install the requirements: `python3 -m pip install -r requirements`
-3. Create a [bot token](https://www.writebots.com/discord-bot-token/) and add it along with your [guild ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) to wtcc_bot.py
+2. Install the requirements: `python3 -m pip install -r requirements` or `poetry install`
+3. Create a [bot token](https://www.writebots.com/discord-bot-token/) and add it along with your [guild ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) to an .env file placed in the same directory
 4. Run the bot: `python3 wtcc_bot.py`
 
 Keep in mind this repo will continue to be updated as needed so you'll want to keep an eye on it and update your bot as well.
@@ -30,11 +29,6 @@ Keep in mind this repo will continue to be updated as needed so you'll want to k
 The bot was written in Python3 (tested on Python 3.9) for macOS and Linux distros. YMMV on Windows and older versions of Python3.
 
 The bot uses [PyCord](https://github.com/Pycord-Development/pycord) on the currently in alpha "Slash Commands" branch.
-
-## ToDo
-
-- Implement cooldown on commands (once Pycord implements it to slash commands)
-- Look into adding other features
 
 ## Acknowledgements and License
 

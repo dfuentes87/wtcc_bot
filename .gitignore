@@ -1,6 +1,6 @@
 #Debugging
 test.py
-debug.txt
+.env
 
 #OS
 .DS_*
@@ -8,4 +8,3 @@ debug.txt
 #Visual Code Studio
 __pycache__/
 .vscode/
-*.code-workspace
