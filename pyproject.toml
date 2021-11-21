@@ -12,6 +12,7 @@ requests = "^2.25.0"
 lxml = "^4.6.3"
 ratemyprofessorapi = {git = "https://github.com/Nobelz/RateMyProfessorAPI.git"}
 py-cord = {git = "https://github.com/Pycord-Development/pycord", rev = "feature/slash"}
+python-dotenv = "^0.19.2"
 
 [tool.poetry.dev-dependencies]
 
