@@ -1,3 +1,5 @@
 RateMyProfessorAPI
 git+https://github.com/Pycord-Development/pycord#egg=py-cord
 python-dotenv
+bs4
+lxml
