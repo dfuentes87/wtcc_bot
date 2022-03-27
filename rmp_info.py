@@ -31,7 +31,8 @@ def embed_builder(prof_name):
     else:
         embed = discord.Embed(
             title="404: Professor not found",
-            description="Double check your spelling and make sure you are typing only the first and last name. Otherwise, they do not have an entry in ratemyprofessors.com.",
+            description="Double check your spelling and make sure you are typing only the first and last name. \
+            Otherwise, they do not have an entry in ratemyprofessors.com for Wake Tech.",
             color=WAKETECH_BLUE,
         )
         embed.set_footer(text="Questions, suggestions, or problems regarding the bot? Send a message to netdragon#3288")
