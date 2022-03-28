@@ -84,7 +84,7 @@ def embed_builder_uni(university, transfer_link=None):
     if university_name is None:
         embed = discord.Embed(
             title="404: University not found",
-            description="Keep in mind only NC universities are listed, or you may want to check your spelling.\n \
+            description="Keep in mind only NC universities are listed. You may want to double check your spelling?\n \
             [Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/search-college#) \
             to see the full list of NC universities.",
             color=WAKETECH_BLUE,
