@@ -34,11 +34,11 @@ def embed_builder(course, url):
         details_key = re.sub('<*.?strong>','',details_key, flags=re.DOTALL)
         details_dict[details_key] = details_value
 
-    # Requisites can get pretty long, let's make sure it wont break things
+    # Requisites can get pretty long, let's make sure it won't break things
     reqs = (details_dict['Requisites:'])
     groups = reqs.split(';')
     if len(groups) > 4:
-        reqs = "List too long, [go to the page](" + str(url) +")."
+        reqs = "List too long, [go to the page](" + str(url) + ")."
     else:
         reqs_list = ''
         for x in groups:
@@ -68,6 +68,5 @@ def embed_builder(course, url):
     embed.add_field(name="Self-Service", value=selfserv_url, inline=True)
     if program_url is not None:
         embed.add_field(name="Program Overview", value=program_url, inline=True)
-
 
     return embed

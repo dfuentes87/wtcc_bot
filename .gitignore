@@ -1,10 +1,11 @@
-#Debugging
+# Debugging
 test.py
 .env
 
-#OS
+# OS
 .DS_*
 
-#Visual Code Studio
+# Development
 __pycache__/
 .vscode/
+.idea
