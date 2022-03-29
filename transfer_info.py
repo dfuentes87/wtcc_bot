@@ -55,6 +55,7 @@ def embed_builder_prog(program):
                     program_details += children + "\n"
                 else:
                     break
+            break
 
     short_url = "[Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree)"
 
