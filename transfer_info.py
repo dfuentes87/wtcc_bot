@@ -20,30 +20,19 @@ def embed_builder_prog(program):
     institution_table = SoupStrainer(class_="table table-striped table-responsive")
     soup = BeautifulSoup(page.content, "lxml", parse_only=institution_table)
 
-    # '^' will make regex do a 'starts with' search
-    program = "^" + program
-    program_title = soup.find(string=re.compile(program, re.IGNORECASE))
-
-    if program_title is None:
-        embed = discord.Embed(
-            title="404: Degree/Program not found",
-            description="Check your spelling, otherwise that program/degree may not be transferable.\n \
-            [Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree) \
-            to check the full degree transfer list.",
-            color=WAKETECH_BLUE,
-        )
-        embed.set_footer(
-            text="Questions, suggestions, or problems regarding the bot? Send a message to netdragon#3288")
-
-        return embed
-
-    # title url (tbd?)
-
-    # program transfer options
+    # find the program and format the results
     program_details = ""
+    program_title = None
     for item in soup.find_all("strong"):
-        if program_title in str(item):
+        # standardizes capitzalition for comparison
+        user_entry = program.title()
+        item_program = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
+        item_program = item_program.replace('Amp;', '')
+        if user_entry in str(item_program):
+            program_title = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
+            program_title = program_title.replace('Amp;', '')
             for children in item.find_all_next("tr"):
+                # this will stop it from continuing to the next program/degree
                 if "strong" not in str(children):
                     children = str(children)
                     children = re.sub('<.?tr>','',children)
@@ -55,19 +44,34 @@ def embed_builder_prog(program):
                     program_details += children + "\n"
                 else:
                     break
+            # prevents duplicates
+            break
 
     short_url = "[Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree)"
 
-    # create the embed
-    embed = discord.Embed(
-        title="TRANSFER OPTIONS FOR: \n" + program_title,
-        # url=url,
-        description=program_details,
-        color=WAKETECH_BLUE,
-    )
-    embed.add_field(name="Full List of Transfer Options by Degree:", value=short_url, inline=True)
+    if program_title is not None:
+        # create the successful embed
+        embed = discord.Embed(
+            title="TRANSFER OPTIONS FOR: \n" + program_title,
+            # url=url,
+            description=program_details,
+            color=WAKETECH_BLUE,
+        )
+        embed.add_field(name="Full List of Transfer Options by Degree:", value=short_url, inline=True)
 
-    return embed
+        return embed
+    else:
+        embed = discord.Embed(
+            title="404: Degree/Program not found",
+            description="Check your spelling, otherwise that program/degree may not be transferable.\n \
+            [Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree) \
+            to check the full degree transfer list.",
+            color=WAKETECH_BLUE,
+        )
+        embed.set_footer(
+            text="Questions, suggestions, or problems regarding the bot? Send a message to netdragon#3288")
+
+        return embed
 
 
 def embed_builder_uni(university, transfer_link=None):
