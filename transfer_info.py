@@ -22,12 +22,14 @@ def embed_builder_prog(program):
 
     # find the program and format the results
     program_details = ""
+    program_title = None
     for item in soup.find_all("strong"):
         # standardizes capitzalition for comparison
-        program = program.title()
-        program_title = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
-        program_title = program_title.replace('Amp;', '')
-        if program in str(program_title):
+        user_entry = program.title()
+        item_program = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
+        item_program = item_program.replace('Amp;', '')
+        if user_entry in str(item_program):
+            program_title = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
             program_title = program_title.replace('Amp;', '')
             for children in item.find_all_next("tr"):
                 # this will stop it from continuing to the next program/degree
@@ -42,11 +44,12 @@ def embed_builder_prog(program):
                     program_details += children + "\n"
                 else:
                     break
+            # prevents duplicates
             break
 
     short_url = "[Click here](https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree)"
 
-    try:
+    if program_title is not None:
         # create the successful embed
         embed = discord.Embed(
             title="TRANSFER OPTIONS FOR: \n" + program_title,
@@ -57,7 +60,7 @@ def embed_builder_prog(program):
         embed.add_field(name="Full List of Transfer Options by Degree:", value=short_url, inline=True)
 
         return embed
-    except UnboundLocalError:
+    else:
         embed = discord.Embed(
             title="404: Degree/Program not found",
             description="Check your spelling, otherwise that program/degree may not be transferable.\n \
