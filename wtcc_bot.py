@@ -132,8 +132,8 @@ async def transfer(ctx,
         if program is not None:
             await ctx.followup.send(embed=transfer_info.embed_builder_prog(program))
         else:
-            await ctx.followup.send("Work in progress, not yet implemented.")
-            # await ctx.followup.send(embed=transfer_info.embed_builder_uni(university))
+            #await ctx.followup.send("Work in progress, not yet implemented.")
+            await ctx.followup.send(embed=transfer_info.embed_builder_uni(university))
     else:
         embed = discord.Embed(
             title="400: Bad Request",
