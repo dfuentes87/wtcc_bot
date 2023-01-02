@@ -17,31 +17,31 @@ def embed_builder_prog(program):
     url = 'https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree'
     page = requests.get(url)
     # get rid of everything but the table data
-    institution_table = SoupStrainer(class_="table table-striped table-responsive")
+    institution_table = SoupStrainer(class_="wt-table")
     soup = BeautifulSoup(page.content, "lxml", parse_only=institution_table)
 
     # find the program and format the results
     program_details = ""
     program_title = None
     for item in soup.find_all("strong"):
+        #print(item)
         # standardizes capitzalition for comparison
         user_entry = program.title()
         item_program = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
         item_program = item_program.replace('Amp;', '')
         if user_entry in str(item_program):
+            #print(item_program)
             program_title = (re.sub('<.*?>', '', str(item), flags=re.DOTALL)).title()
             program_title = program_title.replace('Amp;', '')
-            for children in item.find_all_next("tr"):
+            for children in item.parent.parent.next_siblings:
                 # this will stop it from continuing to the next program/degree
                 if "strong" not in str(children):
+                    children=children.text
                     children = str(children)
-                    children = re.sub('<.?tr>','',children)
-                    children = re.sub('<.?td>', '**', children, 2)
-                    children = re.sub('<.?td>', '', children, 2)
-                    children = re.sub('\n', '', children, 1)
+                    
                     # remove annoying HTML 'amp;'
                     children = children.replace('amp;','')
-                    program_details += children + "\n"
+                    program_details += children.strip() + "\n"
                 else:
                     break
             # prevents duplicates
@@ -75,17 +75,48 @@ def embed_builder_prog(program):
 
 
 def embed_builder_uni(university, transfer_link=None):
-    url = 'https://www.waketech.edu/programs-courses/credit/transfer-choices/search-college'
+    url = 'https://www.waketech.edu/programs-courses/credit/transfer-choices/by-degree'
     page = requests.get(url)
-    # get rid of everything but the universities
-    uni_list = SoupStrainer(class_="paragraph--view-mode--default panel-heading faq")
-    soup = BeautifulSoup(page.content, "lxml", parse_only=uni_list)
+    institution_table = SoupStrainer(class_="wt-table")
+    soup = BeautifulSoup(page.content, "lxml", parse_only=institution_table)
+    print(soup)
+    
+    universities = {}
 
-    # '^' will make regex do a 'starts with' search
-    university = "^" + university
-    university_name = soup.find(string=re.compile(university, re.IGNORECASE))
+    for row in soup.find_all("div", {"class": "wt-row"}):
+      cells = row.select('.wt-cell')
+      if len(cells) == 2:
+        uni = cells[0].text
+        program = cells[1].text
+        if uni not in universities:
+          universities[uni] = []
+        universities[uni].append(program)
+        
+    
+    print(universities)
+    if university in universities:
 
-    if university_name is None:
+        # create the embed
+        embed = discord.Embed(
+            title="TRANSFER OPTIONS FOR: \n" + university,
+            # url=url,
+            description="\n".join(universities[university]),
+            color=WAKETECH_BLUE,
+        )
+        
+        '''
+        if transfer_link is not None:
+            embed.add_field(name="Transfer Link", value=reqs, inline=True)
+        if aas_link is not None:
+            embed.add_field(name="AAS Transfer Link", value=reqs, inline=True)
+        if degree_plan is not None:
+            embed.add_field(name="Transfer Degree Plans", value=reqs, inline=True)
+        if advisor_link is not None:
+            embed.add_field(name="Talk with a University Advisor", value=advisor_link, inline=True)
+        '''
+
+        return embed
+    else:
         embed = discord.Embed(
             title="404: University not found",
             description="Keep in mind only NC universities are listed. You may want to double check your spelling?\n \
@@ -97,33 +128,3 @@ def embed_builder_uni(university, transfer_link=None):
             text="Questions, suggestions, or problems regarding the bot? Send a message to netdragon#3288")
 
         return embed
-
-    # title url (tbd..anchor?)
-
-    # list of degrees
-
-    # transfer link
-
-    # aas transfer link
-
-    # transfer degree plans link (including AE)
-
-    # talk with advisor url
-
-    # create the embed
-    embed = discord.Embed(
-        title="TRANSFER OPTIONS FOR: \n" + university_name,
-        # url=url,
-        description=degree_list,
-        color=WAKETECH_BLUE,
-    )
-    if transfer_link is not None:
-        embed.add_field(name="Transfer Link", value=reqs, inline=True)
-    if aas_link is not None:
-        embed.add_field(name="AAS Transfer Link", value=reqs, inline=True)
-    if degree_plan is not None:
-        embed.add_field(name="Transfer Degree Plans", value=reqs, inline=True)
-    if advisor_link is not None:
-        embed.add_field(name="Talk with a University Advisor", value=advisor_link, inline=True)
-
-    return embed
