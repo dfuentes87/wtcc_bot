@@ -14,6 +14,7 @@ def embed_builder(prof_name):
         prof_rating = str(professor.rating) + " / 5.0"
         prof_diff = str(professor.difficulty) + " / 5.0"
         prof_total = professor.num_ratings
+        prof_url="https://www.ratemyprofessors.com/professor?tid="+str(professor.id)
         if professor.would_take_again is not None and professor.would_take_again > 0:
             prof_again = str(round(professor.would_take_again, 1)) + "%"
         else:
@@ -28,6 +29,7 @@ def embed_builder(prof_name):
         embed.add_field(name="Difficuty", value=prof_diff, inline=True)
         embed.add_field(name="Total Ratings", value=prof_total, inline=True)
         embed.add_field(name="Would Take Again:", value=prof_again, inline=True)
+        embed.add_field(name="Full review:", value=prof_url, inline=False)
     else:
         embed = discord.Embed(
             title="404: Professor not found",
