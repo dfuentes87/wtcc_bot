@@ -120,6 +120,9 @@ def embed_builder_uni(university, transfer_link=None):
 			
 			if button.a.text == "Talk with an advisor":
 				advisor_link = button.a['href']
+			
+			if button.a.text == "Talk with UNCW advisor":
+				advisor_link = button.a['href']
 				
 		if not university_name is None:
 			break
