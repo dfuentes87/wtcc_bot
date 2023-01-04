@@ -54,17 +54,19 @@ async def help(ctx):
     embed = discord.Embed(
         title="WTCC Bot Help",
         description="""WTCC bot is a Discord bot which pulls information from \
-        Wake Tech's course descriptions and RateMyProfessors.com.
+        NC Wake Tech's course descriptions and degree transfer options, as well as \
+        ratings from ratemyprofessors.com.
         
         **Course Descriptions**
-        Use `/course` to find out more information about a course.
+        Use `/course` to find out more information about a Wake Tech course.
         
         **Rate My Professors**
-        Use `/professor` to get ratings on a professor from ratemyprofessors.com
+        Use `/professor` to get ratings on a professor from ratemyprofessors.com. \
+        The bot only searches for professors at Wake Tech Community College in North Carolina.
 
-        **Transfer Options** (coming soon)
-        Use `/transfer` to see transfer information and options based on a program/degree \
-        or the university you want to transfer to.
+        **Transfer Options**
+        Use `/transfer` to see transfer information based on a Wake Tech program/degree OR a \
+        North Carolina university, depending on which suboption you choose.
         
         **Source Code**
         [Click here](https://github.com/dfuentes87/wtcc_bot/)
